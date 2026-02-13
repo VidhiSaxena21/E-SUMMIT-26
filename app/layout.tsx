@@ -23,7 +23,7 @@ const playfairDisplay = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'E-Summit 2026',
+  title: 'esummit26',
   description: 'Join us for the 12th edition of E-Summit — a 5-day celebration of innovation, entrepreneurship, and future technologies.',
   generator: 'v0.dev',
   keywords: ['esummit', 'entrepreneurship', 'innovation', 'technology', 'startup', 'summit', '2026'],
