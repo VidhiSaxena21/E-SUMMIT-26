@@ -23,14 +23,19 @@ const playfairDisplay = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Web Graphics Builder',
-  description: 'Interactive web graphics builder tool',
+  title: 'E-Summit 2026',
+  description: 'Join us for the 12th edition of E-Summit — a 5-day celebration of innovation, entrepreneurship, and future technologies.',
   generator: 'v0.dev',
-  keywords: ['graphics', 'builder', 'web', 'interactive', 'design'],
-  authors: [{ name: 'Graphics Builder Team' }],
+  keywords: ['esummit', 'entrepreneurship', 'innovation', 'technology', 'startup', 'summit', '2026'],
+  authors: [{ name: 'E-Summit Team' }],
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
-    title: 'Web Graphics Builder',
-    description: 'Interactive web graphics builder tool for creating stunning visuals',
+    title: 'E-Summit 2026',
+    description: 'Join us for the 12th edition of E-Summit — a 5-day celebration of innovation, entrepreneurship, and future technologies.',
     type: 'website',
   },
 }

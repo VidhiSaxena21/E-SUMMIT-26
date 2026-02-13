@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { EventHero } from "./EventHero";
 import type { MotionValue } from "framer-motion";
@@ -13,13 +13,18 @@ interface HorizontalScrollerProps {
 export function HorizontalScroller({ children, eventCount }: HorizontalScrollerProps) {
     const targetRef = useRef<HTMLDivElement>(null);
 
+    // Memoize the horizontal range calculation
+    const horizontalRange = useMemo(() => [0.1, 1], []);
+    const horizontalTransform = useMemo(() => `-${(eventCount - 1) * 100}%`, [eventCount]);
+    
     // Scroll target is the tall container so progress 0→1 matches hero + horizontal section
     const { scrollYProgress } = useScroll({
         target: targetRef,
+        offset: ["start start", "end end"]
     });
 
-    // Calculate horizontal translation
-    const x = useTransform(scrollYProgress, [0.1, 1], ["0%", `-${(eventCount - 1) * 100}%`]);
+    // Calculate horizontal translation with optimized range
+    const x = useTransform(scrollYProgress, horizontalRange, ["0%", horizontalTransform]);
 
     // Hero transition: move up and fade
     const heroY = useTransform(scrollYProgress, [0, 0.08], ["0%", "-100%"]);
@@ -31,7 +36,11 @@ export function HorizontalScroller({ children, eventCount }: HorizontalScrollerP
                 <div className="sticky top-0 h-screen w-full overflow-hidden">
                     {/* Hero Section - Layered on top */}
                     <motion.div
-                        style={{ y: heroY, opacity: heroOpacity }}
+                        style={{ 
+                            y: heroY, 
+                            opacity: heroOpacity,
+                            willChange: "transform, opacity"
+                        }}
                         className="absolute inset-0 z-20 pointer-events-none"
                     >
                         <EventHero scrollProgress={scrollYProgress} />
@@ -39,7 +48,10 @@ export function HorizontalScroller({ children, eventCount }: HorizontalScrollerP
 
                     {/* Horizontal Track container - Behind the hero */}
                     <motion.div
-                        style={{ x }}
+                        style={{ 
+                            x,
+                            willChange: "transform"
+                        }}
                         className="absolute inset-0 flex h-screen z-10"
                     >
                         {children(scrollYProgress)}

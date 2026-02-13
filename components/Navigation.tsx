@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRegistration } from "@/components/RegistrationContext";
@@ -14,22 +14,28 @@ export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { openModal } = useRegistration();
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const navLinks = [
+  // Memoize nav links to prevent recreation
+  const navLinks = useMemo(() => [
     { href: "/", label: "Home" },
     { href: "/events", label: "Events" },
     { href: "/speakers", label: "Speakers" },
     { href: "/about", label: "About" },
     { href: "/team", label: "Team" },
     // { href: "#", label: "IF Portal", external: true },
-  ];
+  ], []);
 
-  const handleLinkClick = () => setMobileMenuOpen(false);
+  // Optimize scroll handler with useCallback and passive listener
+  const handleScroll = useCallback(() => {
+    setScrolled(window.scrollY > 50);
+  }, []);
+
+  useEffect(() => {
+    // Use passive listener for better performance
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  const handleLinkClick = useCallback(() => setMobileMenuOpen(false), []);
 
   return (
     <nav

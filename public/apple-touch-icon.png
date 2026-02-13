@@ -1,0 +1,22 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with gradient -->
+  <defs>
+    <radialGradient id="bgGradient" cx="90" cy="90" r="90">
+      <stop offset="0%" stop-color="#1E40AF"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="90" cy="90" r="88" fill="url(#bgGradient)"/>
+  
+  <!-- E-Summit 2026 text -->
+  <text x="90" y="95" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="white">E26</text>
+  
+  <!-- Summit text -->
+  <text x="90" y="120" font-family="Arial, sans-serif" font-size="18" font-weight="600" text-anchor="middle" fill="#A855F7">SUMMIT</text>
+  
+  <!-- Decorative rings -->
+  <circle cx="90" cy="90" r="85" fill="none" stroke="#A855F7" stroke-width="3" opacity="0.8"/>
+  <circle cx="90" cy="90" r="80" fill="none" stroke="white" stroke-width="2" opacity="0.6"/>
+</svg>

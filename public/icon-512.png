@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <radialGradient id="bgGradient" cx="256" cy="256" r="256">
+      <stop offset="0%" stop-color="#1E40AF"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Large background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGradient)"/>
+  
+  <!-- E26 text -->
+  <text x="256" y="256" font-family="Arial, sans-serif" font-size="128" font-weight="bold" text-anchor="middle" fill="white">E26</text>
+  
+  <!-- SUMMIT text -->
+  <text x="256" y="320" font-family="Arial, sans-serif" font-size="64" font-weight="600" text-anchor="middle" fill="#A855F7">SUMMIT</text>
+  
+  <!-- Decorative rings -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#A855F7" stroke-width="8"/>
+  <circle cx="256" cy="256" r="180" fill="none" stroke="white" stroke-width="4"/>
+</svg>

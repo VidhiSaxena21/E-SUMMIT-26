@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import { motion, useTransform, MotionValue } from "framer-motion";
 import Image from "next/image";
 import { GateHorizontal } from "./GateHorizontal";
@@ -22,25 +23,25 @@ interface EventSectionProps {
     range: [number, number]; // [start, end] of this event in the scroll progress
 }
 
-export function EventSection({ event, index, scrollProgress, range }: EventSectionProps) {
+export const EventSection = memo(function EventSection({ event, index, scrollProgress, range }: EventSectionProps) {
     const isEven = index % 2 === 0;
     const { openModal } = useRegistration();
 
+    // Memoize animation ranges to prevent recalculation
+    const animationRanges = useMemo(() => {
+        const visibleStart = index === 0 ? 0.08 : range[0];
+        const fadeOutStart = range[1] - 0.15;
+        return {
+            opacityRange: [visibleStart, fadeOutStart, range[1]] as [number, number, number],
+            scaleRange: [visibleStart, fadeOutStart, range[1]] as [number, number, number],
+            blurRange: [visibleStart, fadeOutStart, range[1]] as [number, number, number]
+        };
+    }, [index, range]);
+
     // Strict for ALL cards: fully shown first (opacity 1, no fade-in), then fade only on scroll past.
-    const visibleStart = index === 0 ? 0.08 : range[0];
-    const fadeOutStart = range[1] - 0.15; // Further increased buffer for Boardroom onwards
-    const opacity = useTransform(scrollProgress,
-        [visibleStart, fadeOutStart, range[1]],
-        [1, 1, 0]
-    );
-    const scale = useTransform(scrollProgress,
-        [visibleStart, fadeOutStart, range[1]],
-        [1, 1, 0.98] // Minimal scale change to prevent UI breaking
-    );
-    const blur = useTransform(scrollProgress,
-        [visibleStart, fadeOutStart, range[1]],
-        ["blur(0px)", "blur(0px)", "blur(6px)"] // Further reduced blur for Boardroom onwards
-    );
+    const opacity = useTransform(scrollProgress, animationRanges.opacityRange, [1, 1, 0]);
+    const scale = useTransform(scrollProgress, animationRanges.scaleRange, [1, 1, 0.98]); // Minimal scale change to prevent UI breaking
+    const blur = useTransform(scrollProgress, animationRanges.blurRange, ["blur(0px)", "blur(0px)", "blur(6px)"]);
 
     return (
         <section className="relative w-screen h-screen flex-shrink-0 flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-24 overflow-hidden">
@@ -48,7 +49,12 @@ export function EventSection({ event, index, scrollProgress, range }: EventSecti
             <GateVertical scrollProgress={scrollProgress} range={[0, 0.05]} />
 
             <motion.div
-                style={{ opacity, scale, filter: blur }}
+                style={{ 
+                    opacity, 
+                    scale, 
+                    filter: blur,
+                    willChange: "transform, opacity, filter"
+                }}
                 className="relative z-10 w-full min-w-full max-w-none grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center px-2 sm:px-4 lg:px-8"
             >
                 {/* Text Content */}
@@ -88,6 +94,8 @@ export function EventSection({ event, index, scrollProgress, range }: EventSecti
                             src={event.imageUrl}
                             alt={event.title}
                             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                            loading="lazy"
+                            decoding="async"
                         />
 
                         {/* Neon Glow Border */}
@@ -97,4 +105,4 @@ export function EventSection({ event, index, scrollProgress, range }: EventSecti
             </motion.div>
         </section>
     );
-}
+});

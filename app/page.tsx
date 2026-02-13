@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Hero3D } from "@/components/Hero3D";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,26 @@ import { PastSpeakers } from "@/components/PastSpeakers";
 import { Sponsors } from "@/components/Sponsors";
 import { useRegistration } from "@/components/RegistrationContext";
 
+// Simple skeleton component for loading state
+const EventCardSkeleton = () => (
+  <div className="w-[280px] sm:w-[320px] lg:w-[340px] h-64 rounded-xl bg-white/5 animate-pulse">
+    <div className="p-4 sm:p-6 h-full flex flex-col justify-between">
+      <div className="space-y-2 sm:space-y-3">
+        <div className="h-3 sm:h-4 bg-white/10 rounded w-16 sm:w-20"></div>
+        <div className="h-4 sm:h-6 bg-white/10 rounded w-3/4 sm:w-3/4"></div>
+        <div className="space-y-1 sm:space-y-2">
+          <div className="h-2 sm:h-3 bg-white/10 rounded"></div>
+          <div className="h-2 sm:h-3 bg-white/10 rounded w-4/5 sm:w-4/5"></div>
+        </div>
+      </div>
+      <div className="space-y-1 sm:space-y-2">
+        <div className="h-2 sm:h-3 bg-white/10 rounded w-1/2 sm:w-1/2"></div>
+        <div className="h-2 sm:h-3 bg-white/10 rounded w-1/3 sm:w-1/3"></div>
+      </div>
+    </div>
+  </div>
+);
+
 const CARD_WIDTH_PX = 340;
 const CARD_GAP = 24;
 
@@ -22,11 +42,17 @@ export default function Home() {
   const { openModal } = useRegistration();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const scroll = (direction: "left" | "right") => {
+  // Memoize scroll calculation
+  const scrollStep = useMemo(() => CARD_WIDTH_PX + CARD_GAP, []);
+  
+  // Optimize scroll function with useCallback
+  const scroll = useCallback((direction: "left" | "right") => {
     if (!scrollRef.current) return;
-    const step = CARD_WIDTH_PX + CARD_GAP;
-    scrollRef.current.scrollBy({ left: direction === "left" ? -step : step, behavior: "smooth" });
-  };
+    scrollRef.current.scrollBy({ 
+      left: direction === "left" ? -scrollStep : scrollStep, 
+      behavior: "smooth" 
+    });
+  }, [scrollStep]);
 
   return (
     <div className="min-h-screen relative">
@@ -57,7 +83,7 @@ export default function Home() {
               <span className="text-secondary font-mono uppercase tracking-[0.2em] text-sm">FEBRUARY 18-22, 2026</span>
             </div>
 
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-display font-bold leading-none mb-6 flex gap-4">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-bold leading-none mb-4 sm:mb-6 flex flex-col sm:flex-row gap-2 sm:gap-4">
   <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/50">
     E-
   </span>
@@ -68,20 +94,24 @@ export default function Home() {
 </h1>
 
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed mb-10 border-l-2 border-primary/50 pl-6">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-lg sm:max-w-xl lg:max-w-2xl leading-relaxed mb-6 sm:mb-8 lg:mb-10 border-l-2 border-primary/50 pl-4 sm:pl-6">
             Join us for the 12th edition of E-Summit — a 5-day celebration of innovation, entrepreneurship, and future technologies.  </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Button
                 onClick={() => openModal()}
                 size="lg"
-                className="bg-primary hover:bg-primary/80 text-white text-lg h-14 px-8 rounded-full shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] transition-all"
+                className="bg-primary hover:bg-primary/80 text-white text-base sm:text-lg h-12 sm:h-14 px-4 sm:px-6 lg:px-8 rounded-full shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] transition-all"
               >
-                Reserve Your Spot
+                <span className="text-sm sm:text-base">Reserve Your Spot</span>
               </Button>
               <Link href="/events">
-                <Button variant="outline" size="lg" className="border-white/20 hover:bg-white/10 text-white text-lg h-14 px-8 rounded-full">
-                  Explore Events
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="border-white/20 hover:bg-white/10 text-white text-base sm:text-lg h-12 sm:h-14 px-4 sm:px-6 lg:px-8 rounded-full"
+                >
+                  <span className="text-sm sm:text-base">Explore Events</span>
                 </Button>
               </Link>
             </div>
@@ -95,12 +125,12 @@ export default function Home() {
         <div className="container">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">Featured Events</h2>
-              <p className="text-muted-foreground">Don't miss these Events!.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-3 sm:mb-4">Featured Events</h2>
+              <p className="text-sm sm:text-base text-muted-foreground">Don't miss these Events!.</p>
             </div>
             <Link href="/events">
-              <button className="hidden md:flex group text-primary hover:text-primary/80 hover:bg-transparent p-0 bg-transparent border-none cursor-pointer items-center">
-                View All Schedule <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <button className="hidden md:flex group text-primary hover:text-primary/80 hover:bg-transparent p-0 bg-transparent border-none cursor-pointer items-center text-sm sm:text-base">
+                View All Schedule <ArrowRight className="ml-2 w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </Link>
           </div>
@@ -111,24 +141,24 @@ export default function Home() {
               type="button"
               onClick={() => scroll("left")}
               aria-label="Previous events"
-              className="flex-shrink-0 z-10 w-12 h-12 rounded-full border border-white/20 bg-black/60 hover:bg-white/10 text-white flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none"
+              className="flex-shrink-0 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/20 bg-black/60 hover:bg-white/10 text-white flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
             {/* Scrollable row of cards */}
             <div
               ref={scrollRef}
-              className="flex-1 overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-hide flex gap-6 pb-2 -mx-4 px-4 md:mx-0 md:px-0"
+              className="flex-1 overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-hide flex gap-4 sm:gap-6 pb-2 -mx-4 px-4 sm:mx-0 md:px-0"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {isLoading ? (
-                Array.from({ length: 7 }).map((_, i) => (
-                  <div key={i} className="flex-shrink-0 w-[340px] h-64 rounded-xl bg-white/5 animate-pulse" />
+                Array.from({ length: 7 }, (_, i) => (
+                  <EventCardSkeleton key={i} />
                 ))
               ) : (
                 events?.slice(0, 7).map((event: any, index: number) => (
-                  <div key={event.id} className="flex-shrink-0 w-[340px]">
+                  <div key={event.id} className="flex-shrink-0 w-[280px] sm:w-[320px] lg:w-[340px]">
                     <EventCard event={event} index={index} />
                   </div>
                 ))
@@ -140,15 +170,15 @@ export default function Home() {
               type="button"
               onClick={() => scroll("right")}
               aria-label="Next events"
-              className="flex-shrink-0 z-10 w-12 h-12 rounded-full border border-white/20 bg-black/60 hover:bg-white/10 text-white flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none"
+              className="flex-shrink-0 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/20 bg-black/60 hover:bg-white/10 text-white flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none"
             >
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
-          <div className="mt-8 md:hidden text-center">
+          <div className="mt-6 sm:mt-8 md:hidden text-center">
             <Link href="/events">
-              <Button variant="outline" className="w-full">View All Schedule</Button>
+              <Button variant="outline" className="w-full text-sm sm:text-base">View All Schedule</Button>
             </Link>
           </div>
         </div>
@@ -165,18 +195,18 @@ export default function Home() {
         <div className="absolute inset-0 bg-primary/5"></div>
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
         <div className="container relative z-10 text-center max-w-3xl mx-auto">
-          <h2 className="text-4xl md:text-6xl font-display font-bold mb-6 text-white">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display font-bold mb-6 text-white">
             Ready to shape the future?
           </h2>
-          <p className="text-xl text-muted-foreground mb-10">
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-8 sm:mb-10">
             Secure your spot at E-Summit 2026. Limited tickets available.
           </p>
           <Button
             onClick={() => openModal()}
             size="lg"
-            className="bg-white text-black hover:bg-gray-200 text-lg px-10 h-16 rounded-full font-bold"
+            className="bg-white text-black hover:bg-gray-200 text-base sm:text-lg px-6 sm:px-8 lg:px-10 h-12 sm:h-14 lg:h-16 rounded-full font-semibold"
           >
-            Register Now
+            <span className="text-sm sm:text-base">Register Now</span>
           </Button>
         </div>
       </section>
