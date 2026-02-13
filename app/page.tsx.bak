@@ -1,0 +1,173 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { Hero3D } from "@/components/Hero3D";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Terminal, Cpu, Globe } from "lucide-react";
+import Link from "next/link";
+import { useEvents } from "@/hooks/use-events";
+import { EventCard } from "@/components/EventCard";
+
+export default function Home() {
+  const { data: events, isLoading } = useEvents();
+
+  return (
+    <div className="min-h-screen">
+      {/* HERO SECTION */}
+      <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
+        {/* <Hero3D /> */}
+
+        <div className="container relative z-10 flex flex-col items-start justify-center h-full pt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="max-w-4xl"
+          >
+            <div className="flex items-center space-x-2 mb-6">
+              <span className="h-px w-8 bg-secondary"></span>
+              <span className="text-secondary font-mono uppercase tracking-[0.2em] text-sm">FEBRUARY 18-22, 2026</span>
+            </div>
+
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-display font-bold leading-none mb-6">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/50">E</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-secondary mt-2">SUMMIT</span>
+            </h1>
+
+            <p className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed mb-10 border-l-2 border-primary/50 pl-6">
+              Join the world's leading visionaries, developers, and creators for a 3-day exploration of AI, Space Tech, and the next generation of the web.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="/register">
+                <Button size="lg" className="bg-primary hover:bg-primary/80 text-white text-lg h-14 px-8 rounded-full shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] transition-all">
+                  Reserve Your Spot
+                </Button>
+              </Link>
+              <Link href="/events">
+                <Button variant="outline" size="lg" className="border-white/20 hover:bg-white/10 text-white text-lg h-14 px-8 rounded-full">
+                  Explore Agenda
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ABOUT SECTION */}
+      <section className="py-16 md:py-24 bg-background relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+        <div className="container relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            <div>
+              <h2 className="text-4xl md:text-5xl font-display font-bold mb-8">
+                Technology meets <br />
+                <span className="text-primary">Imagination</span>
+              </h2>
+              <div className="space-y-6 text-lg text-muted-foreground">
+                <p>
+                  E-Summit 2026 isn't just a conference. It's a collision of ideas, a showcase of breakthrough technologies, and a gathering of the minds shaping our future.
+                </p>
+                <p>
+                  From quantum computing breakthroughs to the ethics of AGI, we're diving deep into the subjects that matter most.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
+                {[
+                  { icon: Terminal, label: "50+ Workshops" },
+                  { icon: Globe, label: "Global Speakers" },
+                  { icon: Cpu, label: "Tech Showcase" },
+                ].map((item, i) => (
+                  <div key={i} className="flex flex-col items-center text-center p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/30 transition-colors">
+                    <item.icon className="w-8 h-8 text-secondary mb-3" />
+                    <span className="font-bold text-white">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative">
+              {/* Abstract visual element */}
+              <div className="aspect-square rounded-full bg-gradient-to-tr from-primary to-secondary opacity-20 blur-[100px] absolute inset-0 animate-pulse" />
+              <div className="relative z-10 glass-panel rounded-2xl p-8 border-l-4 border-l-secondary">
+                <h3 className="text-2xl font-bold mb-4 flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-green-500 mr-3 animate-pulse"></span>
+                  Live Updates
+                </h3>
+                <div className="space-y-4">
+                  {[1, 2, 3].map((_, i) => (
+                    <div key={i} className="flex items-start space-x-4 pb-4 border-b border-white/5 last:border-0">
+                      <div className="text-xs font-mono text-muted-foreground pt-1">
+                        1{i}:00 AM
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">Main Stage Announcement</p>
+                        <p className="text-xs text-muted-foreground mt-1">Keynote speakers for the AI track have just been finalized.</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* EVENTS PREVIEW */}
+      <section className="py-16 md:py-24 bg-black/50">
+        <div className="container">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">Featured Events</h2>
+              <p className="text-muted-foreground">Don't miss these headline sessions</p>
+            </div>
+            <Link href="/events">
+              <Button variant="ghost" className="hidden md:flex group text-primary hover:text-primary/80 hover:bg-transparent p-0">
+                View All Schedule <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {isLoading ? (
+              // Skeleton Loading
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-64 rounded-xl bg-white/5 animate-pulse" />
+              ))
+            ) : (
+              events?.slice(0, 3).map((event, index) => (
+                <EventCard key={event.id} event={event} index={index} />
+              ))
+            )}
+          </div>
+
+          <div className="mt-8 md:hidden text-center">
+            <Link href="/events">
+              <Button variant="outline" className="w-full">View All Schedule</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA SECTION */}
+      <section className="py-24 md:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-primary/5"></div>
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+        <div className="container relative z-10 text-center max-w-3xl mx-auto">
+          <h2 className="text-4xl md:text-6xl font-display font-bold mb-6 text-white">
+            Ready to shape the future?
+          </h2>
+          <p className="text-xl text-muted-foreground mb-10">
+            Secure your spot at E-Summit 2026. Limited tickets available for the early bird pricing.
+          </p>
+          <Link href="/register">
+            <Button size="lg" className="bg-white text-black hover:bg-gray-200 text-lg px-10 h-16 rounded-full font-bold">
+              Register Now
+            </Button>
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}

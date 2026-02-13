@@ -1,0 +1,51 @@
+﻿node.exe : 
+E:\summit\New folder\
+Web-Graphics-Builder\
+server\db.ts:8
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (E:\summ   
+ it\New f...\serv    
+er\db.ts:8:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+  throw new Error(
+        ^
+
+Error: DATABASE_URL 
+must be set. Did you 
+forget to provision 
+a database?
+    at <anonymous> 
+(E:\summit\New folder
+\Web-Graphics-Builder
+\server\db.ts:8:9)
+    at ModuleJob.run 
+(node:internal/module
+s/esm/module_job:377:
+25)
+    at async onImport
+.tracePromise.__proto
+__ (node:internal/mod
+ules/esm/loader:691:2
+6)
+    at async asyncRun
+EntryPointWithESMLoad
+er (node:internal/mod
+ules/run_main:101:5)
+
+Node.js v24.11.0

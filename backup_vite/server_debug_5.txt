@@ -1,0 +1,112 @@
+﻿node.exe : 
+E:\summit\New folder\
+Web-Graphics-Builder\
+node_modules\pg-pool\
+index.js:45
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (E:\summ   
+ it\New f...ool\i    
+ndex.js:45:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+    Error.captureStac
+kTrace(err)
+          ^
+
+AggregateError 
+[ECONNREFUSED]: 
+    at E:\summit\New 
+folder\Web-Graphics-B
+uilder\node_modules\p
+g-pool\index.js:45:11
+    at process.proces
+sTicksAndRejections (
+node:internal/process
+/task_queues:105:5)
+    at async 
+<anonymous> 
+(E:\summit\New folder
+\Web-Graphics-Builder
+\node_modules\src\nod
+e-postgres\session.ts
+:104:19)
+    at async Database
+Storage.getEvents 
+(E:\summit\New folder
+\Web-Graphics-Builder
+\server\storage.ts:26
+:12)
+    at async 
+seedDatabase 
+(E:\summit\New folder
+\Web-Graphics-Builder
+\server\routes.ts:8:2
+6)
+    at async 
+registerRoutes 
+(E:\summit\New folder
+\Web-Graphics-Builder
+\server\routes.ts:39:
+3)
+    at async 
+<anonymous> 
+(E:\summit\New folder
+\Web-Graphics-Builder
+\server\index.ts:63:3
+) {
+  code: 
+'ECONNREFUSED',
+  [errors]: [
+    Error: connect 
+ECONNREFUSED ::1:5432
+        at createConn
+ectionError 
+(node:net:1678:14)
+        at 
+afterConnectMultiple 
+(node:net:1708:16) {
+      errno: -4078,
+      code: 
+'ECONNREFUSED',
+      syscall: 
+'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect 
+ECONNREFUSED 
+127.0.0.1:5432
+        at createConn
+ectionError 
+(node:net:1678:14)
+        at 
+afterConnectMultiple 
+(node:net:1708:16) {
+      errno: -4078,
+      code: 
+'ECONNREFUSED',
+      syscall: 
+'connect',
+      address: 
+'127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+
+Node.js v24.11.0
