@@ -9,7 +9,6 @@ const nextConfig = {
       ...config.resolve.alias,
       'three': 'three',
       '@': './',
-      '@shared': './shared',
     }
     return config
   }

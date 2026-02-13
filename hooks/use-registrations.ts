@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, type InsertRegistration } from "@shared/routes";
+import { api, type InsertRegistration } from "@/shared/routes";
 import { useToast } from "@/hooks/use-toast";
 
 export function useCreateRegistration() {
