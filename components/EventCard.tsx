@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, User, Clock } from "lucide-react";
-import { type Event } from "@/shared/schema";
+import { type Event } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 
 interface EventCardProps {

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, buildUrl, type InsertEvent } from "@/shared/routes";
+import { api, buildUrl, type InsertEvent } from "@shared/routes";
 import { z } from "zod";
 
 // Helper to safely parse API responses with logging

@@ -29,12 +29,17 @@ function useIsMobile() {
   return isMobile;
 }
 
-/** Static hero for mobile: same look, no Spline and no scroll-driven motion to avoid lag */
+/** Static hero for mobile: hero3d image instead of Spline to avoid lag */
 function Hero3DStatic() {
   return (
     <div className="absolute inset-0 -z-10 bg-slate-950">
       <div className="w-full h-full origin-center">
-        <HeroPlaceholder />
+        <img 
+          src="/attached_assets/hero3d.png" 
+          alt="E-Summit 2026 Hero"
+          className="w-full h-full object-cover"
+          style={{ objectPosition: 'center' }}
+        />
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-transparent to-transparent pointer-events-none" />
