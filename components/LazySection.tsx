@@ -17,7 +17,7 @@ function LazySectionInner({
   once = true,
 }: LazySectionProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once, margin: rootMargin });
+  const isInView = useInView(ref, { once });
 
   return (
     <div ref={ref} style={{ minHeight }}>
