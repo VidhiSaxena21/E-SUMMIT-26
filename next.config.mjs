@@ -9,6 +9,8 @@ const nextConfig = {
       ...config.resolve.alias,
       'three': 'three',
       '@': './',
+      // Spline: root "." is not exported (ESM-only); force use of Next entry
+      '@splinetool/react-spline': '@splinetool/react-spline/next',
     }
     return config
   }

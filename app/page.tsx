@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useCallback, useMemo } from "react";
+import dynamic from "next/dynamic";
+import { useRef, useCallback, useMemo, memo } from "react";
 import { motion } from "framer-motion";
 import { Hero3D } from "@/components/Hero3D";
 import { Button } from "@/components/ui/button";
@@ -8,63 +9,79 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useEvents } from "@/hooks/use-events";
 import { EventCard } from "@/components/EventCard";
-import { Gallery } from "@/components/Gallery";
-import { KeyHighlights } from "@/components/KeyHighlights";
-import { PastSpeakers } from "@/components/PastSpeakers";
-import { Sponsors } from "@/components/Sponsors";
+import { LazySection } from "@/components/LazySection";
 import { useRegistration } from "@/components/RegistrationContext";
 
-// Simple skeleton component for loading state
-const EventCardSkeleton = () => (
-  <div className="w-[280px] sm:w-[320px] lg:w-[340px] h-64 rounded-xl bg-white/5 animate-pulse">
-    <div className="p-4 sm:p-6 h-full flex flex-col justify-between">
-      <div className="space-y-2 sm:space-y-3">
-        <div className="h-3 sm:h-4 bg-white/10 rounded w-16 sm:w-20"></div>
-        <div className="h-4 sm:h-6 bg-white/10 rounded w-3/4 sm:w-3/4"></div>
+// Lazy-load heavy below-the-fold sections (chunks load when section enters viewport)
+const Gallery = dynamic(
+  () => import("@/components/Gallery").then((m) => ({ default: m.Gallery })),
+  { ssr: false, loading: () => <div className="min-h-[70vh]" /> }
+);
+const KeyHighlights = dynamic(
+  () =>
+    import("@/components/KeyHighlights").then((m) => ({
+      default: m.KeyHighlights,
+    })),
+  { ssr: false, loading: () => <div className="min-h-[40vh]" /> }
+);
+const PastSpeakers = dynamic(
+  () =>
+    import("@/components/PastSpeakers").then((m) => ({
+      default: m.PastSpeakers,
+    })),
+  { ssr: false, loading: () => <div className="min-h-[50vh]" /> }
+);
+
+// Memoized skeleton so carousel doesn't recreate 7 elements every render
+const EventCardSkeleton = memo(function EventCardSkeleton() {
+  return (
+    <div className="w-[280px] sm:w-[320px] lg:w-[340px] h-64 rounded-xl bg-white/5 animate-pulse">
+      <div className="p-4 sm:p-6 h-full flex flex-col justify-between">
+        <div className="space-y-2 sm:space-y-3">
+          <div className="h-3 sm:h-4 bg-white/10 rounded w-16 sm:w-20"></div>
+          <div className="h-4 sm:h-6 bg-white/10 rounded w-3/4 sm:w-3/4"></div>
+          <div className="space-y-1 sm:space-y-2">
+            <div className="h-2 sm:h-3 bg-white/10 rounded"></div>
+            <div className="h-2 sm:h-3 bg-white/10 rounded w-4/5 sm:w-4/5"></div>
+          </div>
+        </div>
         <div className="space-y-1 sm:space-y-2">
-          <div className="h-2 sm:h-3 bg-white/10 rounded"></div>
-          <div className="h-2 sm:h-3 bg-white/10 rounded w-4/5 sm:w-4/5"></div>
+          <div className="h-2 sm:h-3 bg-white/10 rounded w-1/2 sm:w-1/2"></div>
+          <div className="h-2 sm:h-3 bg-white/10 rounded w-1/3 sm:w-1/3"></div>
         </div>
       </div>
-      <div className="space-y-1 sm:space-y-2">
-        <div className="h-2 sm:h-3 bg-white/10 rounded w-1/2 sm:w-1/2"></div>
-        <div className="h-2 sm:h-3 bg-white/10 rounded w-1/3 sm:w-1/3"></div>
-      </div>
     </div>
-  </div>
-);
+  );
+});
 
 const CARD_WIDTH_PX = 340;
 const CARD_GAP = 24;
+
+const SKELETON_KEYS = [0, 1, 2, 3, 4, 5, 6] as const;
 
 export default function Home() {
   const { data: events, isLoading } = useEvents();
   const { openModal } = useRegistration();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Memoize scroll calculation
   const scrollStep = useMemo(() => CARD_WIDTH_PX + CARD_GAP, []);
-  
-  // Optimize scroll function with useCallback
+
   const scroll = useCallback((direction: "left" | "right") => {
     if (!scrollRef.current) return;
-    scrollRef.current.scrollBy({ 
-      left: direction === "left" ? -scrollStep : scrollStep, 
-      behavior: "smooth" 
+    scrollRef.current.scrollBy({
+      left: direction === "left" ? -scrollStep : scrollStep,
+      behavior: "smooth",
     });
   }, [scrollStep]);
 
+  const eventList = useMemo(() => (events?.slice(0, 7) ?? []), [events]);
+
   return (
-    <div className="min-h-screen relative">
-      {/* Team Background */}
-      <div 
-        className="fixed inset-0 opacity-30 z-0"
-        style={{
-          backgroundImage: 'url(/attached_assets/teambg.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
+    <div className="min-h-screen relative overflow-x-hidden">
+      {/* Team Background - scroll on small viewports to reduce paint/layout cost */}
+      <div
+        className="fixed inset-0 opacity-30 z-0 bg-cover bg-center [background-attachment:scroll] md:[background-attachment:fixed]"
+        style={{ backgroundImage: "url(/attached_assets/teambg.png)" }}
       />
       
       {/* HERO SECTION */}
@@ -135,7 +152,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="relative flex items-center gap-6">
+          <div className="relative flex items-center gap-6 min-w-0">
             {/* Left arrow */}
             <button
               type="button"
@@ -146,23 +163,19 @@ export default function Home() {
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            {/* Scrollable row of cards */}
+            {/* Scrollable row - min-w-0 + overscroll-none for stable layout and no back-swipe */}
             <div
               ref={scrollRef}
-              className="flex-1 overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-hide flex gap-4 sm:gap-6 pb-2 -mx-4 px-4 sm:mx-0 md:px-0"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              className="flex-1 min-w-0 overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-hide flex gap-4 sm:gap-6 pb-2 -mx-4 px-4 sm:mx-0 md:px-0 overscroll-none touch-pan-x"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
             >
-              {isLoading ? (
-                Array.from({ length: 7 }, (_, i) => (
-                  <EventCardSkeleton key={i} />
-                ))
-              ) : (
-                events?.slice(0, 7).map((event: any, index: number) => (
-                  <div key={event.id} className="flex-shrink-0 w-[280px] sm:w-[320px] lg:w-[340px]">
-                    <EventCard event={event} index={index} />
-                  </div>
-                ))
-              )}
+              {isLoading
+                ? SKELETON_KEYS.map((i) => <EventCardSkeleton key={i} />)
+                : eventList.map((event: any, index: number) => (
+                    <div key={event.id} className="flex-shrink-0 w-[280px] sm:w-[320px] lg:w-[340px]">
+                      <EventCard event={event} index={index} />
+                    </div>
+                  ))}
             </div>
 
             {/* Right arrow */}
@@ -184,10 +197,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* NEW SECTIONS */}
-      <Gallery />
-      <KeyHighlights />
-      <PastSpeakers />
+      {/* NEW SECTIONS - load only when scrolled into view to reduce initial work */}
+      <LazySection minHeight="70vh" rootMargin="150px">
+        <Gallery />
+      </LazySection>
+      <LazySection minHeight="40vh" rootMargin="120px">
+        <KeyHighlights />
+      </LazySection>
+      <LazySection minHeight="50vh" rootMargin="120px">
+        <PastSpeakers />
+      </LazySection>
       {/* <Sponsors /> */}
 
       {/* CTA SECTION */}

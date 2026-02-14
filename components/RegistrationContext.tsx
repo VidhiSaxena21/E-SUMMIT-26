@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useMemo, ReactNode } from "react";
 
 interface RegistrationContextType {
     isOpen: boolean;
@@ -15,18 +15,23 @@ export function RegistrationProvider({ children }: { children: ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
 
-    const openModal = (eventName?: string) => {
-        setSelectedEvent(eventName || null);
+    const openModal = useCallback((eventName?: string) => {
+        setSelectedEvent(eventName ?? null);
         setIsOpen(true);
-    };
+    }, []);
 
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         setIsOpen(false);
         setSelectedEvent(null);
-    };
+    }, []);
+
+    const value = useMemo(
+        () => ({ isOpen, selectedEvent, openModal, closeModal }),
+        [isOpen, selectedEvent, openModal, closeModal]
+    );
 
     return (
-        <RegistrationContext.Provider value={{ isOpen, selectedEvent, openModal, closeModal }}>
+        <RegistrationContext.Provider value={value}>
             {children}
         </RegistrationContext.Provider>
     );

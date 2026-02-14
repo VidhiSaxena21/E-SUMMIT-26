@@ -1,42 +1,101 @@
 "use client";
 
-import Spline from "@splinetool/react-spline";
-import { Suspense, useRef } from "react";
+import dynamic from "next/dynamic";
+import { Suspense, useRef, useState, useEffect, useMemo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
-export function Hero3D() {
-  const containerRef = useRef<HTMLDivElement>(null);
+const SplineScene = dynamic(() => import("@/components/SplineSceneClient"), {
+  ssr: false,
+  loading: () => <div className="w-full h-full bg-slate-950" />,
+});
 
-  // Track scroll progress from the hero section
+const HeroPlaceholder = () => (
+  <div className="w-full h-full bg-slate-950" aria-hidden />
+);
+
+const MOBILE_BREAKPOINT = 768;
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+    const handle = () => setIsMobile(mql.matches);
+    handle();
+    mql.addEventListener("change", handle);
+    return () => mql.removeEventListener("change", handle);
+  }, []);
+
+  return isMobile;
+}
+
+/** Static hero for mobile: same look, no Spline and no scroll-driven motion to avoid lag */
+function Hero3DStatic() {
+  return (
+    <div className="absolute inset-0 -z-10 bg-slate-950">
+      <div className="w-full h-full origin-center">
+        <HeroPlaceholder />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-transparent to-transparent pointer-events-none" />
+    </div>
+  );
+}
+
+/** Desktop hero: Spline + scroll-linked parallax */
+function Hero3DInteractive() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [loadSpline, setLoadSpline] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const onIdle = () => {
+      if (!cancelled) setLoadSpline(true);
+    };
+    const id =
+      typeof window !== "undefined" && window.requestIdleCallback
+        ? window.requestIdleCallback(onIdle, { timeout: 600 })
+        : setTimeout(onIdle, 300);
+    return () => {
+      cancelled = true;
+      if (typeof id === "number" && window.cancelIdleCallback)
+        window.cancelIdleCallback(id);
+      else clearTimeout(id as ReturnType<typeof setTimeout>);
+    };
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
   });
 
-  // Transform scroll progress to scale (starts at 1.5x zoomed in, zooms out to 1x gradually)
-  // Using range [0, 0.4] means it completes the zoom in just 40% of scroll for responsive feel
   const scale = useTransform(scrollYProgress, [0, 0.4], [1.5, 1]);
-
-  // Also add subtle y-axis parallax movement
   const y = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+  const motionStyle = useMemo(() => ({ scale, y }), [scale, y]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 -z-10 bg-slate-950">
-      <motion.div
-        style={{ scale, y }}
-        className="w-full h-full origin-center"
-      >
-        <Suspense fallback={<div className="w-full h-full bg-slate-950" />}>
-          <Spline
-            scene="https://prod.spline.design/EF7JOSsHLk16Tlw9/scene.splinecode"
-            className="w-full h-full"
-          />
-        </Suspense>
+      <motion.div style={motionStyle} className="w-full h-full origin-center">
+        {loadSpline ? (
+          <Suspense fallback={<HeroPlaceholder />}>
+            <SplineScene />
+          </Suspense>
+        ) : (
+          <HeroPlaceholder />
+        )}
       </motion.div>
-
-      {/* Overlay Gradient for text readability */}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-transparent to-transparent pointer-events-none" />
     </div>
   );
+}
+
+export function Hero3D() {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return <Hero3DStatic />;
+  }
+
+  return <Hero3DInteractive />;
 }

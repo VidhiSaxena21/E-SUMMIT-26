@@ -24,13 +24,13 @@ export function Navigation() {
     // { href: "#", label: "IF Portal", external: true },
   ], []);
 
-  // Optimize scroll handler with useCallback and passive listener
+  // Only update state when the boolean flips to avoid re-renders on every scroll frame
   const handleScroll = useCallback(() => {
-    setScrolled(window.scrollY > 50);
+    const nowScrolled = window.scrollY > 50;
+    setScrolled((prev) => (prev !== nowScrolled ? nowScrolled : prev));
   }, []);
 
   useEffect(() => {
-    // Use passive listener for better performance
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
@@ -42,7 +42,7 @@ export function Navigation() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-background/80 backdrop-blur-md border-b border-white/10 py-4"
+          ? "bg-background/80 backdrop-blur-sm md:backdrop-blur-md border-b border-white/10 py-4"
           : "bg-transparent py-6"
       )}
     >
@@ -96,7 +96,7 @@ export function Navigation() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-white/10 p-4 md:hidden flex flex-col gap-4 animate-in slide-in-from-top-5">
+        <div className="absolute top-full left-0 right-0 bg-background/95 backdrop-blur-sm border-b border-white/10 p-4 md:hidden flex flex-col gap-4 animate-in slide-in-from-top-5">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href}>
               <div
