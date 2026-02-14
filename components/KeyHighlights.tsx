@@ -14,7 +14,7 @@ const Counter = ({ value, suffix }: { value: number, suffix: string }) => {
     const ref = useRef<HTMLSpanElement>(null);
     const motionValue = useMotionValue(0);
     const springValue = useSpring(motionValue, { stiffness: 50, damping: 15 });
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const isInView = useInView(ref, { once: true });
 
     useEffect(() => {
         if (isInView) {
@@ -32,7 +32,7 @@ const Counter = ({ value, suffix }: { value: number, suffix: string }) => {
 
     return (
         <span className="flex">
-            <span ref={ref}>0</span>
+            <span ref={ref}></span>
             {suffix}
         </span>
     );
